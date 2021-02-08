@@ -89,16 +89,20 @@ public:
 	// void getTheMachineUsage(double *cpuLoad, double *storageLoad, double *storageRead, double *storageWritten);
 
 protected:
-	//check if the machine is idle
+
+	// reset usage stats
+	void resetTheMachine();
+
+	// check if the machine is idle
 	bool isTheMachineIdle();
 
-	//put the machine to sleep
+	// put the machine to sleep
 	void suspendTheMachine();
 
-	//suspend using pm-util
+	// suspend using pm-util
 	void pmUtilSuspend(vector<string> *output);
 
-	//return the sleep mode for pm-util (based on what SLEEP_MODE was set)
+	// return the sleep mode for pm-util (based on what SLEEP_MODE was set)
 	string getPmUtilCommand();
 };
 

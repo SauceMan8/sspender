@@ -29,7 +29,7 @@ Device::Device(const string &deviceName,
 	idle_load_threshold = idleLoadThreshold;
 	m_initialized = false;
 	m_deviceIsIdle = false;
-
+	
 	resetUsage();
 }
 
@@ -116,7 +116,7 @@ void Device::resetUsage()
 void Device::resetUsage(DeviceUsage *deviceUsage)
 {
 	std::lock_guard<mutex> locker(m_mutex);
-
+	m_startTime = Clock::now();
 	deviceUsage->reset();
 }
 
@@ -133,9 +133,8 @@ void Device::updateAverageUsage(const DeviceUsage &deviceUsage)
 {
 	std::lock_guard<mutex> locker(m_mutex);
 
-	m_avrgUsage.load         = updateAverageValue(m_avrgUsage.load,         deviceUsage.load);
-	// m_avrgUsage.totalRead    = updateAverageValue(m_avrgUsage.totalRead,    deviceUsage.totalRead);
-	// m_avrgUsage.totalWritten = updateAverageValue(m_avrgUsage.totalWritten, deviceUsage.totalWritten);
+	m_avrgUsage.load = updateAverageValue(m_avrgUsage.load, deviceUsage.load);
+	
 }
 
 double Device::updateAverageValue(double currentAverageValue, double currentValue)
@@ -158,7 +157,7 @@ void Device::monitorDeviceUsage(Device *deviceToMonitor, shared_ptr<WatchDog> wa
 	//we only need to open the file once
 	ifstream statesFile (deviceToMonitor->getStatesFileName());
 
-	TimePoint startTime = Clock::now();
+	deviceToMonitor->m_startTime = Clock::now();
 
 	//while the device object is still in scope
 	//call its functions to calculate and update the usage
@@ -174,11 +173,11 @@ void Device::monitorDeviceUsage(Device *deviceToMonitor, shared_ptr<WatchDog> wa
 		{
 //			cout << "false\n";
 			deviceToMonitor->setIdle(false);
-			startTime = Clock::now();
+			deviceToMonitor->m_startTime = Clock::now();
 		}
 		else
 		{
-			double duration = getMinutesDuration(startTime);
+			double duration = getMinutesDuration(deviceToMonitor->m_startTime);
 			// cout << "m_deviceName: " << deviceToMonitor->m_deviceName << " "
 			// << " deviceUsage.load: " << deviceUsage.load << " "
 			// << "deviceToMonitor->getIdleLoadThreshold(): " << deviceToMonitor->getIdleLoadThreshold() << " "

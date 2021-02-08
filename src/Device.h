@@ -48,6 +48,7 @@ private:
 	int idle_load_threshold;
 	bool m_initialized;                      //to check if the device is initialized
 	bool m_deviceIsIdle;                     //idle state of this device
+	TimePoint m_startTime;
 
 public:
 	Device(const string &deviceName,

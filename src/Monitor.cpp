@@ -18,41 +18,6 @@
 
 #include "Monitor.h"
 
-namespace
-{
-	template <typename T>
-	inline void sumDevicesUsage (const vector<T> &devices,
-			                     DeviceUsage *totalUsage,
-			                     DeviceUsage *averageUsage)
-	{
-		size_t numberOfDevices = devices.size();
-		int numberOfMonitoredDevices = 0;
-
-		for(size_t i = 0; i < numberOfDevices; ++i)
-		{
-			DeviceUsage deviceUsage = {0};
-
-			devices[i]->getAvrgUsage(&deviceUsage);
-
-			totalUsage->load         += deviceUsage.load;
-			// totalUsage->totalRead    += deviceUsage.totalRead;
-			// totalUsage->totalWritten += deviceUsage.totalWritten;
-
-			numberOfMonitoredDevices++;
-		}
-
-		averageUsage->load         += totalUsage->load / numberOfMonitoredDevices;
-		// averageUsage->totalRead    += totalUsage->totalRead / numberOfMonitoredDevices;
-		// averageUsage->totalWritten += totalUsage->totalWritten / numberOfMonitoredDevices;
-	}
-
-	template <typename T>
-	inline void sumDevicesUsage (const T &devices)
-	{
-		devices->resetUsage();
-	}
-}
-
 Monitor::Monitor()
 {
 
@@ -99,27 +64,6 @@ void Monitor::monitorSystemUsage(const vector<DiskCfg> &disks,
 	}
 }
 
-// void Monitor::getCpuLoad(double *cpuUsage)
-// {
-// 	DeviceUsage totalUsage = {0};
-// 	DeviceUsage averageUsage = {0};
-
-// 	sumDevicesUsage(m_cpusToMonitor, &totalUsage, &averageUsage);
-
-// 	*cpuUsage = roundValue(averageUsage.load);
-// }
-
-// void Monitor::getStorageLoad(double *storageLoad, double *storageRead, double *storageWritten)
-// {
-// 	DeviceUsage totalUsage = {0};
-// 	DeviceUsage averageUsage = {0};
-
-// 	sumDevicesUsage(m_disksToMonitor, &totalUsage, &averageUsage);
-
-// 	*storageLoad    = roundValue(averageUsage.load);
-// 	// *storageRead    = roundValue(averageUsage.totalRead);
-// 	// *storageWritten = roundValue(averageUsage.totalWritten);
-// }
 
 void Monitor::printTheMachineUsage()
 {
@@ -133,6 +77,21 @@ void Monitor::printTheMachineUsage()
 		cout << *(m_disksToMonitor[i]) << endl;
 	}
 }
+
+void Monitor::resetTheMachine()
+{
+	for(size_t i = 0, len = m_cpusToMonitor.size(); i < len; ++i)
+	{
+		m_cpusToMonitor[i]->resetUsage();
+	}
+
+	for(size_t i = 0, len = m_disksToMonitor.size(); i < len; ++i)
+	{
+		m_disksToMonitor[i]->resetUsage();
+	}
+
+}
+
 
 bool Monitor::isTheMachineIdle()
 {

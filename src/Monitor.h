@@ -65,6 +65,8 @@ public:
 
 	bool isTheMachineIdle();
 
+	void resetTheMachine();
+
 };
 
 #endif

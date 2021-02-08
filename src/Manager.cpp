@@ -107,19 +107,21 @@ void Manager::monitorSystemUsage()
 
 		printTheMachineUsage();
 
-		if(m_suspendAfter > 0)
+		if(isIdle && m_suspendAfter > 0)
 		{
 			//if idle for # minutes
 			if(minutesTheMachineBeenIdleFor >= m_suspendAfter)
 			{
-				cout << "system was idle for more than "
-					 << m_suspendAfter
-					 << " mins, will suspend the machine.\n";
+				cout << "System was idle for more than " << m_suspendAfter << " mins, will suspend the machine.\n";
 
 				printHeaderMessage("Suspending the machine", true);
 
 				suspendTheMachine();
 
+				printHeaderMessage("Waking up", true);
+
+				resetTheMachine();
+				
 				idleStartTime = Clock::now();
 				notIdleStartTime = Clock::now();
 			}
@@ -127,11 +129,6 @@ void Manager::monitorSystemUsage()
 	}
 }
 
-// void Manager::getTheMachineUsage(double *cpuLoad, double *storageLoad, double *storageRead, double *storageWritten)
-// {
-// 	m_monitor.getCpuLoad(cpuLoad);
-// 	m_monitor.getStorageLoad(storageLoad, storageRead, storageWritten);
-// }
 
 void Manager::printTheMachineUsage()
 {
@@ -142,6 +139,12 @@ bool Manager::isTheMachineIdle()
 {
 	return m_monitor.isTheMachineIdle();
 }
+
+void Manager::resetTheMachine()
+{
+	m_monitor.resetTheMachine();
+}
+
 
 void Manager::suspendTheMachine()
 {
@@ -163,7 +166,6 @@ void Manager::suspendTheMachine()
 
 void Manager::pmUtilSuspend(vector<string> *output)
 {
-
 	//After setting the time, PC can be turned off with this command
 	runSystemCommand(getPmUtilCommand(), output);
 }

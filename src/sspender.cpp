@@ -29,15 +29,16 @@ int main(int argc, char *argv[])
 	if (argc > 1)
 	{
 		filePath = argv[1];
+	} else {
+		filePath = "sspender.cfg";
 	}
 
-	vector<string> ipToWatch, wakeAt;
+	vector<string> ipToWatch;
 	vector<DiskCfg> disksToMonitor;
 	CpuCfg cpuConfig;
 	SLEEP_MODE sleepMode;
 	int check_if_idle_every;
     int stop_monitoring_for;
-    int reset_monitoring_after;
     int suspend_after;
 
 	PartitionTable partitionTable;
@@ -54,11 +55,9 @@ int main(int argc, char *argv[])
 			                                     &ipToWatch,
 			                                     &cpuConfig,
 			                                     &disksToMonitor,
-			                                     &wakeAt,
 			                                     &sleepMode,
 			                                     &check_if_idle_every,
 												 &stop_monitoring_for,
-												 &reset_monitoring_after,
 												 &suspend_after);
 
 	if(configParsed)
@@ -72,20 +71,6 @@ int main(int argc, char *argv[])
 			cout << ipToWatch[i] << ",";
 		}
 
-		cout << "\nSuspend the machine if all these devices are idle: ";
-		if(cpuConfig.suspendIfIdle)
-		{
-			cout << cpuConfig.cpuName << ",";
-		}
-			
-		for(size_t i = 0, size = disksToMonitor.size(); i < size; ++i)
-		{
-			if(disksToMonitor[i].suspendIfIdle)
-			{
-				cout << disksToMonitor[i].diskName << ",";
-			}
-		}
-
 		cout << "\nSpin down these drives if they are idle: ";
 		for(size_t i = 0, size = disksToMonitor.size(); i < size; ++i)
 		{
@@ -95,12 +80,6 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		cout << "\nWake up the machine at the following times: ";
-		for(size_t i = 0, size = wakeAt.size(); i < size; ++i)
-		{
-			cout << wakeAt[i] << ",";
-		}
-
 		cout << "\nSleep mode is: "
 		     << (sleepMode == MEM ? "Suspend to RAM" : (sleepMode == DISK ? "Suspend to disk" : "Stand by"))
 		     << endl;
@@ -108,11 +87,9 @@ int main(int argc, char *argv[])
 		manager.setIpsToWatch(ipToWatch);
 		manager.setDisksToMonitor(disksToMonitor);
 		manager.setCpusToMonitor(cpuConfig);
-		manager.setTimesToWakeAt(wakeAt);
 		manager.setSleepMode(sleepMode);
 		manager.setTimers(check_if_idle_every,
 		   	    		  stop_monitoring_for,
-		   	    		  reset_monitoring_after,
 		   	    		  suspend_after);
 
 		printHeaderMessage("Monitoring the machine", false);

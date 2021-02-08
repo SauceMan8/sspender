@@ -20,8 +20,7 @@
 
 Device::Device(const string &deviceName,
 			 	 int idleTimeThreshold,
-			 	 int idleLoadThreshold,
-			 	 bool suspendIfIdle)
+			 	 int idleLoadThreshold)
 {
 	m_deviceName = deviceName;
 	m_currentUsage.load = 0;
@@ -30,7 +29,6 @@ Device::Device(const string &deviceName,
 	idle_load_threshold = idleLoadThreshold;
 	m_initialized = false;
 	m_deviceIsIdle = false;
-	m_shouldSuspendIfIdle = suspendIfIdle;
 
 	resetUsage();
 }
@@ -57,11 +55,6 @@ void Device::setMonitoringState(bool monitoringState)
 shared_ptr<WatchDog> Device::getWatchDogCopy()
 {
 	return m_watchDog;
-}
-
-bool Device::shouldSuspendIfIdle()
-{
-	return m_shouldSuspendIfIdle;
 }
 
 string& Device::getDeviceName()
@@ -110,8 +103,8 @@ void Device::setIdleState(bool state)
 void Device::copyDeviceUsage(const DeviceUsage &input, DeviceUsage *output)
 {
 	output->load = input.load;
-	output->totalRead = input.totalRead;
-	output->totalWritten = input.totalWritten;
+	// output->totalRead = input.totalRead;
+	// output->totalWritten = input.totalWritten;
 }
 
 void Device::resetUsage()
@@ -141,8 +134,8 @@ void Device::updateAverageUsage(const DeviceUsage &deviceUsage)
 	std::lock_guard<mutex> locker(m_mutex);
 
 	m_avrgUsage.load         = updateAverageValue(m_avrgUsage.load,         deviceUsage.load);
-	m_avrgUsage.totalRead    = updateAverageValue(m_avrgUsage.totalRead,    deviceUsage.totalRead);
-	m_avrgUsage.totalWritten = updateAverageValue(m_avrgUsage.totalWritten, deviceUsage.totalWritten);
+	// m_avrgUsage.totalRead    = updateAverageValue(m_avrgUsage.totalRead,    deviceUsage.totalRead);
+	// m_avrgUsage.totalWritten = updateAverageValue(m_avrgUsage.totalWritten, deviceUsage.totalWritten);
 }
 
 double Device::updateAverageValue(double currentAverageValue, double currentValue)
@@ -171,7 +164,7 @@ void Device::monitorDeviceUsage(Device *deviceToMonitor, shared_ptr<WatchDog> wa
 	//call its functions to calculate and update the usage
 	while(watchDog->shouldStillMonitor())
 	{
-		DeviceUsage deviceUsage = {0, 0, 0};
+		DeviceUsage deviceUsage = {0};
 
 		deviceToMonitor->calculateUsage(statesFile, &deviceUsage);
 
@@ -179,16 +172,25 @@ void Device::monitorDeviceUsage(Device *deviceToMonitor, shared_ptr<WatchDog> wa
 
 		if(deviceUsage.load > deviceToMonitor->getIdleLoadThreshold())
 		{
+//			cout << "false\n";
 			deviceToMonitor->setIdle(false);
 			startTime = Clock::now();
 		}
 		else
 		{
 			double duration = getMinutesDuration(startTime);
-
+			// cout << "m_deviceName: " << deviceToMonitor->m_deviceName << " "
+			// << " deviceUsage.load: " << deviceUsage.load << " "
+			// << "deviceToMonitor->getIdleLoadThreshold(): " << deviceToMonitor->getIdleLoadThreshold() << " "
+			// << "duration: " << duration << " " 
+			// << "timeth: " << deviceToMonitor->getIdleTimeThreshold() << " ";
 			if(duration >= deviceToMonitor->getIdleTimeThreshold())
 			{
+				// cout << "true\n";
 				deviceToMonitor->setIdle(true);
+			}else{
+				// cout << "false\n";
+				deviceToMonitor->setIdle(false);
 			}
 		}
 	}

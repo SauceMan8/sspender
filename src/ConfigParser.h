@@ -45,11 +45,9 @@ public:
 			         vector<string> *ipToWatch,
 			         CpuCfg *couConfig,
                      vector<DiskCfg> *disksToMonitor,
-			         vector<string> *wakeAt,
 			         SLEEP_MODE *sleepMode,
 					 int *check_if_idle_every,
 					 int *stop_monitoring_for,
-					 int *reset_monitoring_after,
 					 int *suspend_after);
 
 	//read a file and load its content to a Config

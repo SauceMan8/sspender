@@ -44,9 +44,8 @@ public:
 		 const string &diskUuid,
 		 int idleTimeThreshold,
 		 int idleLoadThreshold,
-		 bool spinDown,
-		 bool suspendIfIdle) :
-			 Device(diskName, idleTimeThreshold, idleLoadThreshold, suspendIfIdle),
+		 bool spinDown) :
+			 Device(diskName, idleTimeThreshold, idleLoadThreshold),
 				 m_uuid(diskUuid),
 				 m_sectorSize(0),
 				 m_shouldSpinDownIfIdle(spinDown) { };
@@ -62,8 +61,6 @@ public:
 
 	//returns the file containing the stats information for this disk
 	virtual string getStatesFileName();
-
-	virtual bool shouldMonitorUsage();
 
 	virtual void setIdle(bool state);
 

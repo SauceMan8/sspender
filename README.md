@@ -1,3 +1,16 @@
+# Why this fork?
+
+I needed a simpler version of sspender and some parts of the original code seemed not necessary.
+
+* This fork uses pm-utils and it doesn't schedule a wakeup.
+* Timings are increased (hours).
+* Idle times can be defined for cpu and disk individually.
+* Disk stat parsing has been updated.
+
+
+_Original README:_
+
+
 # What is sspender?
 A couple of years ago, I buit a NAS / media / backup server to play with, which I didn't want to be ON all the time as it didn't do anything that required a 24/7 up time.
 
@@ -31,11 +44,6 @@ libconfig is required during the build of sspender, as well as during execution 
 $ apt install libconfig++-dev
 ```
 
-### rtcwake
-rtcwake is required to suspend the machine, this is the default way.
-``` bash
-$ apt install rtcwake
-```
 
 ### pm-utils
 pm-utils is required to suspend the machine, only required if you choose pm-utils instead of rtcwake in sspender.cfg.

@@ -48,14 +48,11 @@ private:
 	int idle_load_threshold;
 	bool m_initialized;                      //to check if the device is initialized
 	bool m_deviceIsIdle;                     //idle state of this device
-	bool m_shouldSuspendIfIdle;              //if true, the machine will only suspend if this device
-	                                         //(and any other device where this is true) is idle
 
 public:
 	Device(const string &deviceName,
 			int idleTimeThreshold,
-			int idleLoadThreshold,
-			bool suspendIfIdle);
+			int idleLoadThreshold);
 	virtual ~Device();
 
 	//getters
@@ -89,8 +86,6 @@ public:
 
 	//reads the stats from the file and calculate this device's usage
 	virtual void calculateUsage(ifstream &statesFile, DeviceUsage *deviceUsage) = 0;
-
-	virtual bool shouldMonitorUsage() = 0;
 
 	virtual void setIdle(bool state) = 0;
 

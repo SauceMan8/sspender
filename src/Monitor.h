@@ -46,10 +46,10 @@ public:
 	~Monitor();
 
 	//get the current cpu load
-	void getCpuLoad(double *cpuUsage);
+	// void getCpuLoad(double *cpuUsage);
 
 	//get the storage load
-	void getStorageLoad(double *storageLoad, double *storageRead, double *storageWritten);
+	// void getStorageLoad(double *storageLoad, double *storageRead, double *storageWritten);
 
 	//check if any of the clients is online
 	bool areClientsConnected(const vector<string> &clients);
@@ -65,7 +65,6 @@ public:
 
 	bool isTheMachineIdle();
 
-	bool canBeSuspended();
 };
 
 #endif

@@ -30,23 +30,20 @@ namespace
 
 		for(size_t i = 0; i < numberOfDevices; ++i)
 		{
-			if(devices[i]->shouldMonitorUsage())
-			{
-				DeviceUsage deviceUsage = {0, 0, 0};
+			DeviceUsage deviceUsage = {0};
 
-				devices[i]->getAvrgUsage(&deviceUsage);
+			devices[i]->getAvrgUsage(&deviceUsage);
 
-				totalUsage->load         += deviceUsage.load;
-				totalUsage->totalRead    += deviceUsage.totalRead;
-				totalUsage->totalWritten += deviceUsage.totalWritten;
+			totalUsage->load         += deviceUsage.load;
+			// totalUsage->totalRead    += deviceUsage.totalRead;
+			// totalUsage->totalWritten += deviceUsage.totalWritten;
 
-				numberOfMonitoredDevices++;
-			}
+			numberOfMonitoredDevices++;
 		}
 
 		averageUsage->load         += totalUsage->load / numberOfMonitoredDevices;
-		averageUsage->totalRead    += totalUsage->totalRead / numberOfMonitoredDevices;
-		averageUsage->totalWritten += totalUsage->totalWritten / numberOfMonitoredDevices;
+		// averageUsage->totalRead    += totalUsage->totalRead / numberOfMonitoredDevices;
+		// averageUsage->totalWritten += totalUsage->totalWritten / numberOfMonitoredDevices;
 	}
 
 	template <typename T>
@@ -81,10 +78,9 @@ void Monitor::monitorSystemUsage(const vector<DiskCfg> &disks,
 	{
 		Disk *newDisk= new Disk(disks[i].diskName,
 								disks[i].diskUUID,
-								disks[i].idle_time_threshold,
-								disks[i].idle_load_threshold,
-								disks[i].spinDown,
-								disks[i].suspendIfIdle);
+								disks[i].disk_idle_time_threshold,
+								disks[i].disk_idle_load_threshold,
+								disks[i].spinDown);
 
 		newDisk->monitorUsage();
 
@@ -94,9 +90,8 @@ void Monitor::monitorSystemUsage(const vector<DiskCfg> &disks,
 	for(size_t i = 0, len = cpus.size(); i < len; ++i)
 	{
 		Cpu *newCpu= new Cpu(cpus[i].cpuName,
-				             cpus[i].idle_time_threshold,
-							 cpus[i].idle_load_threshold,
-							 cpus[i].suspendIfIdle);
+				             cpus[i].cpu_idle_time_threshold,
+							 cpus[i].cpu_idle_load_threshold);
 
 		newCpu->monitorUsage();
 
@@ -104,27 +99,27 @@ void Monitor::monitorSystemUsage(const vector<DiskCfg> &disks,
 	}
 }
 
-void Monitor::getCpuLoad(double *cpuUsage)
-{
-	DeviceUsage totalUsage = {0, 0, 0};
-	DeviceUsage averageUsage = {0, 0, 0};
+// void Monitor::getCpuLoad(double *cpuUsage)
+// {
+// 	DeviceUsage totalUsage = {0};
+// 	DeviceUsage averageUsage = {0};
 
-	sumDevicesUsage(m_cpusToMonitor, &totalUsage, &averageUsage);
+// 	sumDevicesUsage(m_cpusToMonitor, &totalUsage, &averageUsage);
 
-	*cpuUsage = roundValue(averageUsage.load);
-}
+// 	*cpuUsage = roundValue(averageUsage.load);
+// }
 
-void Monitor::getStorageLoad(double *storageLoad, double *storageRead, double *storageWritten)
-{
-	DeviceUsage totalUsage = {0, 0, 0};
-	DeviceUsage averageUsage = {0, 0, 0};
+// void Monitor::getStorageLoad(double *storageLoad, double *storageRead, double *storageWritten)
+// {
+// 	DeviceUsage totalUsage = {0};
+// 	DeviceUsage averageUsage = {0};
 
-	sumDevicesUsage(m_disksToMonitor, &totalUsage, &averageUsage);
+// 	sumDevicesUsage(m_disksToMonitor, &totalUsage, &averageUsage);
 
-	*storageLoad    = roundValue(averageUsage.load);
-	*storageRead    = roundValue(averageUsage.totalRead);
-	*storageWritten = roundValue(averageUsage.totalWritten);
-}
+// 	*storageLoad    = roundValue(averageUsage.load);
+// 	// *storageRead    = roundValue(averageUsage.totalRead);
+// 	// *storageWritten = roundValue(averageUsage.totalWritten);
+// }
 
 void Monitor::printTheMachineUsage()
 {
@@ -143,7 +138,7 @@ bool Monitor::isTheMachineIdle()
 {
 	for(size_t i = 0, len = m_cpusToMonitor.size(); i < len; ++i)
 	{
-		if(m_cpusToMonitor[i]->shouldSuspendIfIdle() && !m_cpusToMonitor[i]->getIdleState())
+		if(m_cpusToMonitor[i]->getIdleState() == false)
 		{
 			return false;
 		}
@@ -151,34 +146,13 @@ bool Monitor::isTheMachineIdle()
 
 	for(size_t i = 0, len = m_disksToMonitor.size(); i < len; ++i)
 	{
-		if(m_disksToMonitor[i]->shouldSuspendIfIdle() && !m_disksToMonitor[i]->getIdleState())
+		if(m_disksToMonitor[i]->getIdleState() == false)
 		{
 			return false;
 		}
 	}
 
 	return true;
-}
-
-bool Monitor::canBeSuspended()
-{
-	for(size_t i = 0, len = m_cpusToMonitor.size(); i < len; ++i)
-	{
-		if(m_cpusToMonitor[i]->shouldSuspendIfIdle())
-		{
-			return true;
-		}
-	}
-
-	for(size_t i = 0, len = m_disksToMonitor.size(); i < len; ++i)
-	{
-		if(m_disksToMonitor[i]->shouldSuspendIfIdle())
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 bool Monitor::areClientsConnected(const vector<string> &clients)

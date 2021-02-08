@@ -46,11 +46,6 @@ void Cpu::monitorUsage()
 	cpuMonitorThread.detach();
 }
 
-bool Cpu::shouldMonitorUsage()
-{
-	return shouldSuspendIfIdle();
-}
-
 void Cpu::setIdle(bool state)
 {
 	setIdleState(state);
@@ -127,7 +122,7 @@ void Cpu::sumCpuJiffies(const vector<string> &fileOutput, int *workJiffies, int 
 
 ostream & operator<<(ostream &os, Cpu &cpu)
 {
-	DeviceUsage deviceUsage = {0, 0, 0};
+	DeviceUsage deviceUsage = {0};
 	cpu.getAvrgUsage(&deviceUsage);
 
 	os << cpu.getDeviceName() << " -" << (cpu.getIdleState() ? " idle " : " busy") << " - ";

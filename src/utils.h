@@ -40,48 +40,46 @@ typedef std::chrono::time_point<std::chrono::system_clock> TimePoint;
 struct CpuCfg
 {
 	string cpuName;
-	int idle_load_threshold;
-	int idle_time_threshold;
-	bool suspendIfIdle;
+	int cpu_idle_load_threshold;
+	int cpu_idle_time_threshold;
 };
 
 struct DiskCfg
 {
 	string diskName;
 	string diskUUID;
-	int idle_load_threshold;
-	int idle_time_threshold;
-	bool suspendIfIdle;
+	int disk_idle_load_threshold;
+	int disk_idle_time_threshold;
 	bool spinDown;
 };
 
 struct DeviceUsage
 {
 	double load;
-	double totalRead;
-	double totalWritten;
+	// double totalRead;
+	// double totalWritten;
 
 	void reset ()
 	{
 		load = 0;
-		totalRead = 0;
-		totalWritten = 0;
+		// totalRead = 0;
+		// totalWritten = 0;
 	}
 };
 
 struct DiskStats
 {
-	int num_r_io_processed;  //number of read I/Os processed
-	int num_r_io_merged;     //number of read I/Os merged
-	int num_r_sectors;       //number of sectors read
-	int time_r_ticks;        //total wait time for read requests
-	int num_w_io_processed;  //number of write I/Os processed
-	int num_w_io_merged;     //number of write I/Os merged
-	int num_w_sectors;       //number of sectors written
-	int time_w_ticks;        //total wait time for write requests
-	int num_in_flight;       //number of I/Os currently in flight
-	int time_io_ticks;       //total time this block device has been active
-	int time_in_queue;       //total wait for all requests
+	// double num_r_io_processed;  //number of read I/Os processed
+	// double num_r_io_merged;     //number of read I/Os merged
+	double num_r_sectors;       //number of sectors read
+	// double time_r_ticks;        //total wait time for read requests
+	// double num_w_io_processed;  //number of write I/Os processed
+	// double num_w_io_merged;     //number of write I/Os merged
+	double num_w_sectors;       //number of sectors written
+	// double time_w_ticks;        //total wait time for write requests
+	// double num_in_flight;       //number of I/Os currently in flight
+	double time_io_ticks;       //total time this block device has been active
+	// double time_in_queue;       //total wait for all requests
 };
 
 bool convertTimeToMinutes(string time, double *totalMinutes);

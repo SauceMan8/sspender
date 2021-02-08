@@ -37,9 +37,8 @@ private:
 public:
 	Cpu(const string &cpuName,
 		int idleTimeThreshold,
-		int idleLoadThreshold,
-		bool suspendIfIdle) :
-		Device(cpuName, idleTimeThreshold, idleLoadThreshold, suspendIfIdle) { };
+		int idleLoadThreshold) :
+		Device(cpuName, idleTimeThreshold, idleLoadThreshold) { };
 
 	//initialize this cpu
 	virtual void initDevice();
@@ -52,8 +51,6 @@ public:
 
 	//returns the file containing the stats information for this cpu
 	virtual string getStatesFileName();
-
-	virtual bool shouldMonitorUsage();
 
 	virtual void setIdle(bool state);
 

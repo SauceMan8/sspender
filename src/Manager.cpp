@@ -39,14 +39,6 @@ void Manager::setCpusToMonitor(const CpuCfg &couConfig)
 	m_cpusToMonitor.push_back(couConfig);
 }
 
-void Manager::setTimesToWakeAt(const vector<string> &wakeAt)
-{
-	for(size_t i = 0, size = wakeAt.size(); i < size; ++i)
-	{
-		m_timesToWakeAt.push_back(wakeAt[i]);
-	}
-}
-
 void Manager::setSleepMode(SLEEP_MODE sleepMode)
 {
 	m_sleepMode = sleepMode;
@@ -54,12 +46,10 @@ void Manager::setSleepMode(SLEEP_MODE sleepMode)
 
 void Manager::setTimers(int check_if_idle_every,
 				   	    int stop_monitoring_for,
-				   	    int reset_monitoring_after,
 				   	    int suspend_after)
 {
 	m_checkIfIdleEvery     = check_if_idle_every;
 	m_stopMonitoringFor    = stop_monitoring_for;
-	m_resetMonitoringAfter = reset_monitoring_after;
 	m_suspendAfter         = suspend_after;
 }
 
@@ -75,7 +65,6 @@ void Manager::monitorSystemUsage()
 	{
 		//check if the machine is idle every # minutes
 		std::this_thread::sleep_for(std::chrono::minutes(m_checkIfIdleEvery));
-		//std::this_thread::sleep_for(std::chrono::seconds(5));
 		
 		printHeaderMessage("Checking if clients are online", true);
 
@@ -118,18 +107,8 @@ void Manager::monitorSystemUsage()
 
 		printTheMachineUsage();
 
-		if(canBeSuspended())
+		if(m_suspendAfter > 0)
 		{
-			//if system is busy for # minutes
-			if(minutesTheMachineBeenBusyFor >= m_resetMonitoringAfter)
-			{
-				cout << "System was busy for more than " << m_resetMonitoringAfter
-					 << " mins, reseting idle timer.\n";
-
-				idleStartTime = Clock::now();
-				notIdleStartTime = Clock::now();
-			}
-
 			//if idle for # minutes
 			if(minutesTheMachineBeenIdleFor >= m_suspendAfter)
 			{
@@ -148,30 +127,15 @@ void Manager::monitorSystemUsage()
 	}
 }
 
-void Manager::getTheMachineUsage(double *cpuLoad, double *storageLoad, double *storageRead, double *storageWritten)
-{
-	m_monitor.getCpuLoad(cpuLoad);
-	m_monitor.getStorageLoad(storageLoad, storageRead, storageWritten);
-}
+// void Manager::getTheMachineUsage(double *cpuLoad, double *storageLoad, double *storageRead, double *storageWritten)
+// {
+// 	m_monitor.getCpuLoad(cpuLoad);
+// 	m_monitor.getStorageLoad(storageLoad, storageRead, storageWritten);
+// }
 
 void Manager::printTheMachineUsage()
 {
-//	double cpuLoad, storageLoad, storageRead, storageWritten;
-//
-//	getTheMachineUsage(&cpuLoad, &storageLoad, &storageRead, &storageWritten);
-//
-//	cout << "Average CPU usage: Load - " << cpuLoad << "%." << endl;
-//
-//	cout << "Average Storage usage (across all monitored drives): Load - "
-//	     << storageLoad << "%, Read - " << storageRead << "KB/s, Written - "
-//	     << storageWritten << "KB/s." << endl;
-
 	m_monitor.printTheMachineUsage();
-}
-
-bool Manager::canBeSuspended()
-{
-	return m_monitor.canBeSuspended();
 }
 
 bool Manager::isTheMachineIdle()
@@ -181,76 +145,9 @@ bool Manager::isTheMachineIdle()
 
 void Manager::suspendTheMachine()
 {
-	double currentTimeInMinutes = 0;  //since 00:00
-
-	getCurremtTimeInMinutes(&currentTimeInMinutes);
-
-	vector<double> suspendUpTo;
-
-	//convert all passed in times to minutes from 00:00
-	//00:40 -> 40 minutes, 1:10 -> 70 minutes ...
-	for(size_t i = 0, len = m_timesToWakeAt.size(); i < len; ++i)
-	{
-		double timeInMinutes;
-
-		if(convertTimeToMinutes(m_timesToWakeAt[i], &timeInMinutes))
-		{
-			suspendUpTo.push_back(timeInMinutes);
-		}
-	}
-
-	//sort by eraliest first
-	sort(suspendUpTo.begin(), suspendUpTo.end(), sortVector);
-
-	//find the earliest time within the same day
-	for(size_t i = 0, len = suspendUpTo.size(); i < len; ++i)
-	{
-		if(currentTimeInMinutes < suspendUpTo[i])
-		{
-			suspendUntil(currentTimeInMinutes, suspendUpTo[i]);
-
-			return;
-		}
-	}
-
-	//if we hit hit code, that means that the earliest time in suspendUpTo is tomorrow
-	//we will just pick the first element in the array as that is the smallest.
-	if(suspendUpTo.size() > 0)
-	{
-		suspendUntil(currentTimeInMinutes, suspendUpTo[0]);
-	}
-	else
-	{
-		//suspend for 24 hours
-		suspendUntil(currentTimeInMinutes, currentTimeInMinutes);
-	}
-}
-
-void Manager::suspendUntil(double currentTimeInMinutes, double until)
-{
-
-	double secondsToSleep = 0;
-
-	if(currentTimeInMinutes < until)
-	{
-		//suspend until time is on the same day
-		secondsToSleep = ((until - currentTimeInMinutes) - SUSPEND_OFFSET) * SECONDS_IN_MINUTE;
-	}
-	else
-	{
-		//suspend until time is on the following day
-		secondsToSleep = (until + (TOTAL_MINUTES_IN_DAY - currentTimeInMinutes) - SUSPEND_OFFSET) * SECONDS_IN_MINUTE;
-	}
-
-	cout << "Got: current time in minutes (" << currentTimeInMinutes << "), suspend until(" << until << ").\n"
-	     << "Suspending the machine for " << secondsToSleep << " seconds." << endl;
-
 	vector<string> output;
 
-	rtcWakeSuspend(secondsToSleep, &output);
-	//pmUtilSuspend(secondsToSleep, &output);
-
-	//todo execute script after resume
+	pmUtilSuspend(&output);
 
 	printHeaderMessage("System returned from suspend", true);
 	cout << "Suspend output: ";
@@ -263,47 +160,14 @@ void Manager::suspendUntil(double currentTimeInMinutes, double until)
 	cout << endl;
 }
 
-void Manager::rtcWakeSuspend(double secondsToSleep, vector<string> *output)
+
+void Manager::pmUtilSuspend(vector<string> *output)
 {
-	string sleepMode = getRtcWakeSleepMode();
-
-	ostringstream oss;
-	oss << "/usr/sbin/rtcwake -m " << sleepMode << " -s " << secondsToSleep;
-
-	runSystemCommand(oss.str(), output);
-}
-
-void Manager::pmUtilSuspend(double secondsToSleep, vector<string> *output)
-{
-	ostringstream oss;
-
-	//Clear previously set wakeup time
-	oss << "sh -c \"echo 0 > /sys/class/rtc/rtc0/wakealarm\"";
-
-	runSystemCommand(oss.str());
-
-	oss.str("");
-
-	//Set the wakeup time
-	oss << "sh -c \"echo `date '+%s' -d '+ " << (secondsToSleep / 60)
-	    << " minutes'` > /sys/class/rtc/rtc0/wakealarm\"";
-
-	runSystemCommand(oss.str());
 
 	//After setting the time, PC can be turned off with this command
 	runSystemCommand(getPmUtilCommand(), output);
 }
 
-string Manager::getRtcWakeSleepMode()
-{
-	switch(m_sleepMode)
-	{
-		case STAND_BY: { return string("standby");}
-		case MEM:      { return string("mem");}
-		case DISK:     { return string("disk");}
-		default:       { return string("disk");}
-	}
-}
 
 string Manager::getPmUtilCommand()
 {
@@ -312,6 +176,6 @@ string Manager::getPmUtilCommand()
 		case STAND_BY: { return string("/usr/sbin/pm-suspend");}
 		case MEM:      { return string("/usr/sbin/pm-suspend");}
 		case DISK:     { return string("/usr/sbin/pm-hibernate");}
-		default:       { return string("/usr/sbin/pm-hibernate");}
+		default:       { return string("/usr/sbin/pm-suspend");}
 	}
 }

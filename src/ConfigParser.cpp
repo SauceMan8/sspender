@@ -106,8 +106,7 @@ namespace
 	//to this machine
 	bool validateDisk(DiskCfg &disk, PartitionTable &partitionTable)
 	{
-		//don't monitor the disk's usage if both options are false
-		if(disk.suspendIfIdle || disk.spinDown)
+		if(disk.spinDown)
 		{
 			string parentDisk;
 
@@ -139,11 +138,9 @@ bool ConfigParser::loadConfigs(const string &filePath,
                          vector<string> *ipToWatch,
                          CpuCfg *couConfig,
                          vector<DiskCfg> *diskConfigs,
-                         vector<string> *wakeAt,
                          SLEEP_MODE *sleepMode,
                          int *check_if_idle_every,
 						 int *stop_monitoring_for,
-						 int *reset_monitoring_after,
 						 int *suspend_after)
 {
 	libconfig::Config cfg;
@@ -157,7 +154,6 @@ bool ConfigParser::loadConfigs(const string &filePath,
 
 	bool monitorAllDisks = false;
 	string ips_to_watch = "";
-	string wake_at = "";
 	string sleep_mode = "";
 
 	try
@@ -177,11 +173,9 @@ bool ConfigParser::loadConfigs(const string &filePath,
 		loockupFieldInCfgFile(tuningScope, string("check_if_idle_every"),    *check_if_idle_every,    &CHECK_IF_IDLE_EVERY);
 		loockupFieldInCfgFile(tuningScope, string("stop_monitoring_for"),    *stop_monitoring_for,    &STOP_MONITORING_FOR);
 		loockupFieldInCfgFile(tuningScope, string("suspend_after"),          *suspend_after,          &SUSPEND_AFTER);
-		loockupFieldInCfgFile(tuningScope, string("reset_monitoring_after"), *reset_monitoring_after, &RESET_MONITORING_IF_BUSY_FOR);
 
 		//rootCfgFile.setting
 		loockupFieldInCfgFile(settingScope, string("ips_to_watch"), ips_to_watch);
-		loockupFieldInCfgFile(settingScope, string("wake_at"),      wake_at);
 		loockupFieldInCfgFile(settingScope, string("sleep_mode"), sleep_mode, &DEFAULT_SLEEP_MODE);
 
 		parseCpu(cpuScope, couConfig);
@@ -211,15 +205,12 @@ bool ConfigParser::loadConfigs(const string &filePath,
 
 	cout << "ips_to_watch = "                     << ips_to_watch             << "\n"
 		 //<< "disks_to_monitor = "                 << disks_to_monitor         << "\n"
-		 << "wake_at = "                          << wake_at                  << "\n"
 		 << "sleep_mode = "                       << sleep_mode               << "\n"
 		 << "check_if_idle_every (minutes) = "    << *check_if_idle_every     << "\n"
 		 << "stop_monitoring_for (minutes) = "    << *stop_monitoring_for     << "\n"
-		 << "reset_monitoring_after (minutes) = " << *reset_monitoring_after  << "\n"
 		 << "suspend_after (minutes) = "          << *suspend_after           << endl;
 
 	parseMultiChoiceArgs(ips_to_watch, ipToWatch, isValidIpAddress);
-	parseMultiChoiceArgs(wake_at, wakeAt, isValidTime);
 	parseSleepMode(sleep_mode, sleepMode);
 
 	return true;
@@ -228,9 +219,8 @@ bool ConfigParser::loadConfigs(const string &filePath,
 void ConfigParser::parseCpu(const Setting& cpuScope, CpuCfg *cpuConfig)
 {
 	cpuConfig->cpuName = "CPU";
-	loockupFieldInCfgFile(cpuScope, string("idle_load_threshold"),    cpuConfig->idle_load_threshold, &IDLE_LOAD_THRESHOLD);
-	loockupFieldInCfgFile(cpuScope, string("idle_time_threshold"),    cpuConfig->idle_time_threshold, &IDLE_TIME_THRESHOLD);
-	loockupFieldInCfgFile(cpuScope, string("no_suspend_if_not_idle"), cpuConfig->suspendIfIdle, &NO_SUSPEND_IF_NOT_IDLE);
+	loockupFieldInCfgFile(cpuScope, string("idle_load_threshold"),    cpuConfig->cpu_idle_load_threshold, &CPU_IDLE_LOAD_THRESHOLD);
+	loockupFieldInCfgFile(cpuScope, string("idle_time_threshold"),    cpuConfig->cpu_idle_time_threshold, &CPU_IDLE_TIME_THRESHOLD);
 }
 
 void ConfigParser::parseDisks(const Setting& diskScope, vector<DiskCfg> *diskConfigs)
@@ -239,10 +229,9 @@ void ConfigParser::parseDisks(const Setting& diskScope, vector<DiskCfg> *diskCon
 	{
 		DiskCfg disk;
 
-		loockupFieldInCfgFile(diskScope[i], string("no_suspend_if_not_idle"), disk.suspendIfIdle,       &NO_SUSPEND_IF_NOT_IDLE);
 		loockupFieldInCfgFile(diskScope[i], string("spind_down_if_idle"),     disk.spinDown,            &SPIN_DOWN_DISK_IF_IDLE);
-		loockupFieldInCfgFile(diskScope[i], string("idle_load_threshold"),    disk.idle_load_threshold, &IDLE_LOAD_THRESHOLD);
-		loockupFieldInCfgFile(diskScope[i], string("idle_time_threshold"),    disk.idle_time_threshold, &IDLE_TIME_THRESHOLD);
+		loockupFieldInCfgFile(diskScope[i], string("idle_load_threshold"),    disk.disk_idle_load_threshold, &DISK_IDLE_LOAD_THRESHOLD);
+		loockupFieldInCfgFile(diskScope[i], string("idle_time_threshold"),    disk.disk_idle_time_threshold, &DISK_IDLE_TIME_THRESHOLD);
 
 		string diskUuid, diskName;
 		bool gotValidUuid = false;

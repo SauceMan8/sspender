@@ -65,16 +65,6 @@ void Disk::calculateUsage(ifstream &statsFile, DeviceUsage *diskUsage)
 	//and get the percentage of that over the waiting time
 	diskUsage->load = ( double(newDiskStates.time_io_ticks - prevDiskStates.time_io_ticks) / MONITORING_THREAD_FREQUENCY ) * 100;
 
-	//get the total read/written sectors during the waiting time,
-	//multiply that by the sector size of the disk to get bytes
-	//and then devide it by 1000 to get the Kbytes
-	// diskUsage->totalRead = ( double(newDiskStates.num_r_sectors - prevDiskStates.num_r_sectors) * m_sectorSize ) / 1000;
-	// diskUsage->totalWritten = ( double(newDiskStates.num_w_sectors - prevDiskStates.num_w_sectors) * m_sectorSize ) / 1000;
-
-	// cout << "diskUsage->totalRead: " << diskUsage->totalRead << endl; 
-	// cout << "diskUsage->totalWritten: " << diskUsage->totalWritten << endl; 
-	
-
 }
 
 void Disk::setIdle(bool state)
@@ -103,18 +93,10 @@ void Disk::getDiskStats(ifstream &statsFile, DiskStats *stats)
 		
 		if(tokens.size() >= DISK_LINE_NUM_OF_STATS)
 		{
-			
-			// stats->num_r_io_processed = atof(tokens[0].c_str());  //number of read I/Os processed
-			// stats->num_r_io_merged    = atof(tokens[1].c_str());  //number of read I/Os merged
+		
 			stats->num_r_sectors      = atof(tokens[2].c_str());  //number of sectors read
-			// stats->time_r_ticks       = atof(tokens[3].c_str());  //total wait time for read requests
-			// stats->num_w_io_processed = atof(tokens[4].c_str());  //number of write I/Os processed
-			// stats->num_w_io_merged    = atof(tokens[5].c_str());  //number of write I/Os merged
 			stats->num_w_sectors      = atof(tokens[6].c_str());  //number of sectors written
-			// stats->time_w_ticks       = atof(tokens[7].c_str());  //total wait time for write requests
-			// stats->num_in_flight      = atof(tokens[8].c_str());  //number of I/Os currently in flight
 			stats->time_io_ticks      = atof(tokens[9].c_str());  //total time this block device has been active
-			// stats->time_in_queue      = atof(tokens[10].c_str()); //total wait for all requests
 		
 		}
 	}
@@ -158,10 +140,9 @@ ostream & operator<<(ostream &os, Disk &disk)
 	DeviceUsage deviceUsage = {0};
 	disk.getAvrgUsage(&deviceUsage);
 
-	os << disk.getDeviceName() << " -" << (disk.getIdleState() ? " idle " : " busy") << " - ";
+	os << disk.getDeviceName() << " -" << (disk.getIdleState() ? " idle " : " not idle") << " - ";
 	os << "Load - " << deviceUsage.load << "\n";
-	// "%, Read - " << deviceUsage.totalRead << "KB/s, Written - " << deviceUsage.totalWritten << "KB/s.\n";
-
+	
 	return os;
 }
 

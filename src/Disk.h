@@ -33,9 +33,10 @@ using namespace std;
 class Disk : public Device {
 
 private:
-	string m_uuid;                 //disk UUID
-	int m_sectorSize;              //disk sector size
-	bool m_shouldSpinDownIfIdle;   //should spin down this disk when idle?
+	string m_uuid;                 // disk UUID
+	int m_sectorSize;              // disk sector size
+	bool m_shouldSpinDownIfIdle;   // should spin down this disk when idle?
+	bool m_hasBeenSpunDown;		   // track if a idle disk was spun down already
 
 	void spinDown();
 

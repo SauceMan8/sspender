@@ -21,7 +21,7 @@
 void Disk::initDevice()
 {
 	m_sectorSize = getDiskSectorSize(getDeviceName());
-
+	m_hasBeenSpunDown = false;
 	isDeviceInitialized(true);
 }
 
@@ -74,7 +74,10 @@ void Disk::setIdle(bool state)
 	if(state && shouldSpinDownIfIdle())
 	{
 		spinDown();
+	} else {
+		m_hasBeenSpunDown = false;
 	}
+
 }
 
 void Disk::getDiskStats(ifstream &statsFile, DiskStats *stats)
@@ -120,6 +123,9 @@ int Disk::getDiskSectorSize(const string &diskName)
 
 void Disk::spinDown()
 {
+	if(m_hasBeenSpunDown == true){
+		return;
+	}
 	cout << "Spinning " << getDeviceName() << " down." << endl;
 	ostringstream oss;
 	oss << "/sbin/hdparm -y /dev/" + getDeviceName();

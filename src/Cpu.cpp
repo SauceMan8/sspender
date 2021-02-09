@@ -125,7 +125,8 @@ ostream & operator<<(ostream &os, Cpu &cpu)
 	DeviceUsage deviceUsage = {0};
 	cpu.getAvgUsage(&deviceUsage);
 
-	os << cpu.getDeviceName() << " -" << (cpu.getIdleState() ? " idle " : " busy") << " - ";
+	os << cpu.getDeviceName() << " -" << (cpu.getIdleState() ? " idle " : " not idle ") <<  " - ";
+	os << "Idle time - " << std::to_string( (int) cpu.getCurrentIdleTime()) << " - ";
 	os << "Load - " << deviceUsage.load <<  "%";
 
 	return os;

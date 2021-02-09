@@ -29,6 +29,7 @@ Device::Device(const string &deviceName,
 	idle_load_threshold = idleLoadThreshold;
 	m_initialized = false;
 	m_deviceIsIdle = false;
+	m_currentIdleTime = 0;
 	
 	resetUsage();
 }
@@ -152,6 +153,17 @@ int Device::getIdleTimeThreshold()
 	return idle_time_threshold;
 };
 
+
+void Device::setCurrentIdleTime(double time)
+{
+	m_currentIdleTime = time;
+};
+
+double Device::getCurrentIdleTime()
+{
+	return m_currentIdleTime;
+};
+
 void Device::monitorDeviceUsage(Device *deviceToMonitor, shared_ptr<WatchDog> watchDog)
 {
 	//we only need to open the file once
@@ -174,21 +186,17 @@ void Device::monitorDeviceUsage(Device *deviceToMonitor, shared_ptr<WatchDog> wa
 //			cout << "false\n";
 			deviceToMonitor->setIdle(false);
 			deviceToMonitor->m_startTime = Clock::now();
+			deviceToMonitor->setCurrentIdleTime(0);
 		}
 		else
 		{
 			double duration = getMinutesDuration(deviceToMonitor->m_startTime);
-			// cout << "m_deviceName: " << deviceToMonitor->m_deviceName << " "
-			// << " deviceUsage.load: " << deviceUsage.load << " "
-			// << "deviceToMonitor->getIdleLoadThreshold(): " << deviceToMonitor->getIdleLoadThreshold() << " "
-			// << "duration: " << duration << " " 
-			// << "timeth: " << deviceToMonitor->getIdleTimeThreshold() << " ";
+			deviceToMonitor->setCurrentIdleTime(duration);
+		
 			if(duration >= deviceToMonitor->getIdleTimeThreshold())
 			{
-				// cout << "true\n";
 				deviceToMonitor->setIdle(true);
 			}else{
-				// cout << "false\n";
 				deviceToMonitor->setIdle(false);
 			}
 		}

@@ -49,6 +49,7 @@ private:
 	bool m_initialized;                      //to check if the device is initialized
 	bool m_deviceIsIdle;                     //idle state of this device
 	TimePoint m_startTime;
+	double m_currentIdleTime;					 // time inm min the divice has been idle for
 
 public:
 	Device(const string &deviceName,
@@ -62,6 +63,8 @@ public:
 	bool getIdleState();
 	int  getIdleLoadThreshold();
 	int  getIdleTimeThreshold();
+	double  getCurrentIdleTime();
+	void setCurrentIdleTime(double time);
 
 	//returns this device's name
 	string& getDeviceName();

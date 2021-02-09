@@ -94,13 +94,13 @@ void Manager::monitorSystemUsage()
 
 		if(isIdle)
 		{
-			cout << "System is idle (" << minutesTheMachineBeenIdleFor << " minutes).\n";
-
+			cout << "System is idle since " << minutesTheMachineBeenIdleFor << " minutes.\n";
 			notIdleStartTime = Clock::now();
 		}
 		else
 		{
-			cout << "System is not idle (" << minutesTheMachineBeenBusyFor << " minutes).\n";
+			cout << "System is not idle since " << minutesTheMachineBeenBusyFor << " minutes.\n";
+			idleStartTime = Clock::now();
 		}
 
 		printTheMachineUsage();

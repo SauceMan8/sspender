@@ -123,10 +123,10 @@ void Cpu::sumCpuJiffies(const vector<string> &fileOutput, int *workJiffies, int 
 ostream & operator<<(ostream &os, Cpu &cpu)
 {
 	DeviceUsage deviceUsage = {0};
-	cpu.getAvrgUsage(&deviceUsage);
+	cpu.getAvgUsage(&deviceUsage);
 
 	os << cpu.getDeviceName() << " -" << (cpu.getIdleState() ? " idle " : " busy") << " - ";
-	os << "Load - " << deviceUsage.load <<  "%\n";
+	os << "Load - " << deviceUsage.load <<  "%";
 
 	return os;
 }

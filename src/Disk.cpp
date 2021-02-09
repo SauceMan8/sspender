@@ -144,10 +144,10 @@ bool Disk::shouldSpinDownIfIdle()
 ostream & operator<<(ostream &os, Disk &disk)
 {
 	DeviceUsage deviceUsage = {0};
-	disk.getAvrgUsage(&deviceUsage);
+	disk.getAvgUsage(&deviceUsage);
 
 	os << disk.getDeviceName() << " -" << (disk.getIdleState() ? " idle " : " not idle") << " - ";
-	os << "Load - " << deviceUsage.load << "\n";
+	os << "Load - " << deviceUsage.load << "%";
 	
 	return os;
 }

@@ -79,11 +79,11 @@ void Device::getCurrentUsage(DeviceUsage *deviceUsage)
 	copyDeviceUsage(m_currentUsage, deviceUsage);
 }
 
-void Device::getAvrgUsage(DeviceUsage *deviceUsage)
+void Device::getAvgUsage(DeviceUsage *deviceUsage)
 {
 	std::lock_guard<mutex> locker(m_mutex);
 
-	copyDeviceUsage(m_avrgUsage, deviceUsage);
+	copyDeviceUsage(m_avgUsage, deviceUsage);
 }
 
 bool Device::getIdleState()
@@ -109,7 +109,7 @@ void Device::copyDeviceUsage(const DeviceUsage &input, DeviceUsage *output)
 
 void Device::resetUsage()
 {
-	resetUsage(&m_avrgUsage);
+	resetUsage(&m_avgUsage);
 	resetUsage(&m_currentUsage);
 }
 
@@ -133,7 +133,7 @@ void Device::updateAverageUsage(const DeviceUsage &deviceUsage)
 {
 	std::lock_guard<mutex> locker(m_mutex);
 
-	m_avrgUsage.load = updateAverageValue(m_avrgUsage.load, deviceUsage.load);
+	m_avgUsage.load = updateAverageValue(m_avgUsage.load, deviceUsage.load);
 	
 }
 

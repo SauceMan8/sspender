@@ -43,7 +43,7 @@ private:
 	mutex m_mutex;                            //mutex to make reads/writes atomic
 	shared_ptr<WatchDog> m_watchDog;          //used to shutdown detached threads
 	string m_deviceName;                      //name of this device
-	DeviceUsage m_currentUsage, m_avrgUsage;  //current and average usage
+	DeviceUsage m_currentUsage, m_avgUsage;  //current and average usage
 	int idle_time_threshold;
 	int idle_load_threshold;
 	bool m_initialized;                      //to check if the device is initialized
@@ -58,7 +58,7 @@ public:
 
 	//getters
 	void getCurrentUsage(DeviceUsage *deviceUsage);
-	void getAvrgUsage(DeviceUsage *deviceUsage);
+	void getAvgUsage(DeviceUsage *deviceUsage);
 	bool getIdleState();
 	int  getIdleLoadThreshold();
 	int  getIdleTimeThreshold();

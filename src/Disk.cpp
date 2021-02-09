@@ -125,15 +125,18 @@ void Disk::spinDown()
 {
 	if(m_hasBeenSpunDown == true){
 		return;
+	} else {
+		m_hasBeenSpunDown = true;
+	
+		cout << "Spinning " << getDeviceName() << " down." << endl;
+		ostringstream oss;
+		oss << "/sbin/hdparm -y /dev/" + getDeviceName();
+		cout << oss.str() << endl;
+
+		vector<string> output;
+
+		runSystemCommand(oss.str(), &output);
 	}
-	cout << "Spinning " << getDeviceName() << " down." << endl;
-	ostringstream oss;
-	oss << "/sbin/hdparm -y /dev/" + getDeviceName();
-	cout << oss.str() << endl;
-
-	vector<string> output;
-
-	runSystemCommand(oss.str(), &output);
 }
 
 bool Disk::shouldSpinDownIfIdle()
@@ -146,7 +149,8 @@ ostream & operator<<(ostream &os, Disk &disk)
 	DeviceUsage deviceUsage = {0};
 	disk.getAvgUsage(&deviceUsage);
 
-	os << disk.getDeviceName() << " -" << (disk.getIdleState() ? " idle " : " not idle") << " - ";
+	os << disk.getDeviceName() << " -" << (disk.getIdleState() ? " idle " : " not idle ") <<  " - ";
+	os << "Idle time - " << std::to_string( (int) disk.getCurrentIdleTime()) << " - ";
 	os << "Load - " << deviceUsage.load << "%";
 	
 	return os;

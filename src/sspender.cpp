@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 	partitionTable.loadPartitionTable();
 
-	cout << "PartitionTable loaded:\n" << partitionTable << endl;
+	//cout << "PartitionTable loaded:\n" << partitionTable << endl;
 
 	ConfigParser configParser(partitionTable);
 	Manager manager;

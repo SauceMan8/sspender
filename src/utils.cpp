@@ -106,13 +106,10 @@ void getCurremtTimeInMinutes(double *totalMinutes)
 
 void printHeaderMessage(const string &message, bool logTime)
 {
-	if(logTime)
-	{
-		cout << "=====|| " << message << " | " << getCurrentDateTime() << endl;
-	}
-	else
-	{
-		cout << "\n==========|| " << message << endl;
+	if(logTime)	{
+		cout << "|| " << getCurrentDateTime() << " | " << message << " ||" << endl;
+	} else {
+		cout << "|| " << message << endl;
 	}
 }
 

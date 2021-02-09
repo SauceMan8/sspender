@@ -89,9 +89,7 @@ void Monitor::resetTheMachine()
 	{
 		m_disksToMonitor[i]->resetUsage();
 	}
-
 }
-
 
 bool Monitor::isTheMachineIdle()
 {
@@ -118,16 +116,19 @@ bool Monitor::areClientsConnected(const vector<string> &clients)
 {
 	bool isAnyClientOnline = false;
 
-	for(size_t i = 0, len = clients.size(); i < len; ++i)
-	{
-		if(isIpAddressOnline(clients[i]))
+	if(clients.size() > 0){
+		printHeaderMessage("Checking if clients are online", true);
+		
+		for(size_t i = 0, len = clients.size(); i < len; ++i)
 		{
-			cout << "IP " << clients[i] << " is online." << endl;
+			if(isIpAddressOnline(clients[i]))
+			{
+				cout << "IP " << clients[i] << " is online." << endl;
 
-			isAnyClientOnline = true;
+				isAnyClientOnline = true;
+			}
 		}
 	}
-
 	return isAnyClientOnline;
 }
 

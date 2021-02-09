@@ -41,6 +41,8 @@ int main(int argc, char *argv[])
     int stop_monitoring_for;
     int suspend_after;
 
+	cout << "Version 0.0.2b" << endl;
+
 	PartitionTable partitionTable;
 
 	partitionTable.loadPartitionTable();
@@ -92,7 +94,7 @@ int main(int argc, char *argv[])
 		   	    		  stop_monitoring_for,
 		   	    		  suspend_after);
 
-		printHeaderMessage("Monitoring the machine", false);
+		printHeaderMessage("Monitoring the machine", true);
 
 		manager.monitorSystemUsage();
 	}

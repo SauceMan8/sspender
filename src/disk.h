@@ -20,7 +20,7 @@
 #define DISK_H_
 
 
-#include "Device.h"
+#include "device.h"
 #include "utils.h"
 
 using namespace std;

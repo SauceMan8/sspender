@@ -16,7 +16,7 @@
  * along with sspender.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "WatchDog.h"
+#include "watch_dog.h"
 
 void WatchDog::shouldStillMonitor(bool keppMonitoring)
 {

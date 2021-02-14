@@ -19,9 +19,9 @@
 #ifndef CPU_H_
 #define CPU_H_
 
-#include "Device.h"
+#include "device.h"
 #include "utils.h"
-#include "WatchDog.h"
+#include "watch_dog.h"
 
 using namespace std;
 

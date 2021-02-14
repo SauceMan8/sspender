@@ -11,14 +11,14 @@ find_package (Threads)
 
 ADD_EXECUTABLE ( sspender
   src/sspender.cpp
-  src/ConfigParser.cpp
-  src/Cpu.cpp
-  src/Disk.cpp
-  src/Device.cpp
-  src/Manager.cpp
-  src/Monitor.cpp
-  src/PartitionTable.cpp
-  src/WatchDog.cpp
+  src/config_parser.cpp
+  src/cpu.cpp
+  src/disk.cpp
+  src/device.cpp
+  src/manager.cpp
+  src/monitor.cpp
+  src/partition_table.cpp
+  src/watch_dog.cpp
   src/utils.cpp
   )
 

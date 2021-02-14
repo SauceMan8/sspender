@@ -23,9 +23,9 @@
 #include <fstream>
 
 #include "constants.h"
-#include "Device.h"
-#include "Disk.h"
-#include "Cpu.h"
+#include "device.h"
+#include "disk.h"
+#include "cpu.h"
 #include "utils.h"
 
 using namespace std;

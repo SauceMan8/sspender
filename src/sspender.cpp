@@ -16,9 +16,9 @@
  * along with sspender.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Manager.h"
-#include "PartitionTable.h"
-#include "ConfigParser.h"
+#include "manager.h"
+#include "partition_table.h"
+#include "config_parser.h"
 
 using namespace std;
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     int stop_monitoring_for;
     int suspend_after;
 
-	cout << "Version 0.0.2c" << endl;
+	cout << "Version 0.0.2d" << endl;
 
 	PartitionTable partitionTable;
 

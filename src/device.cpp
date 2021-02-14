@@ -16,7 +16,7 @@
  * along with sspender.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Device.h"
+#include "device.h"
 
 Device::Device(const string &deviceName,
 			 	 int idleTimeThreshold,

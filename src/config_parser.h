@@ -26,7 +26,7 @@
 
 #include "utils.h"
 #include "constants.h"
-#include "PartitionTable.h"
+#include "partition_table.h"
 
 using namespace std;
 using namespace libconfig;

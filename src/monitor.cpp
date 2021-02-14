@@ -16,7 +16,7 @@
  * along with sspender.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Monitor.h"
+#include "monitor.h"
 
 Monitor::Monitor()
 {

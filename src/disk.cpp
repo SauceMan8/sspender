@@ -16,7 +16,7 @@
  * along with sspender.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Disk.h"
+#include "disk.h"
 
 void Disk::initDevice()
 {

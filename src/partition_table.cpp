@@ -16,7 +16,7 @@
  * along with sspender.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PartitionTable.h"
+#include "partition_table.h"
 
 bool PartitionTable::isPartitionValid(const string &partitionName, string *parentDisk /*NULL*/)
 {

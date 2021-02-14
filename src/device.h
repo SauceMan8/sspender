@@ -28,7 +28,7 @@
 #include <mutex>
 #include <memory>
 
-#include "WatchDog.h"
+#include "watch_dog.h"
 #include "constants.h"
 #include "utils.h"
 

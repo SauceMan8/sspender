@@ -16,7 +16,7 @@
  * along with sspender.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ConfigParser.h"
+#include "config_parser.h"
 
 #include <sstream>
 #include <vector>

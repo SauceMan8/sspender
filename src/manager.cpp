@@ -16,7 +16,7 @@
  * along with sspender.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Manager.h"
+#include "manager.h"
 
 void Manager::setIpsToWatch(const vector<string> &ipToWatch)
 {

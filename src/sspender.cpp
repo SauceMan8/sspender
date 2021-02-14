@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     int stop_monitoring_for;
     int suspend_after;
 
-	cout << "Version 0.0.2b" << endl;
+	cout << "Version 0.0.2c" << endl;
 
 	PartitionTable partitionTable;
 

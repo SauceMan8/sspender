@@ -112,12 +112,9 @@ void Manager::monitorSystemUsage()
 			{
 				cout << "System was idle for more than " << m_suspendAfter << " mins, will suspend the machine.\n";
 
-				printHeaderMessage("Suspending the machine", true);
-
 				suspendTheMachine();
 
-				printHeaderMessage("Waking up", true);
-
+				// This will happen after waking up:
 				resetTheMachine();
 				
 				idleStartTime = Clock::now();
@@ -148,6 +145,8 @@ void Manager::suspendTheMachine()
 {
 	vector<string> output;
 
+	printHeaderMessage("Suspending the machine", true);
+
 	pmUtilSuspend(&output);
 
 	printHeaderMessage("System returned from suspend", true);
@@ -164,7 +163,6 @@ void Manager::suspendTheMachine()
 
 void Manager::pmUtilSuspend(vector<string> *output)
 {
-	//After setting the time, PC can be turned off with this command
 	runSystemCommand(getPmUtilCommand(), output);
 }
 

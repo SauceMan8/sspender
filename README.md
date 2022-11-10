@@ -1,11 +1,16 @@
 # Why this fork?
 
-I needed a simpler version of sspender and some parts of the original code seemed not necessary.
+I liked rcrane's fork, but I wanted my own space to make changes. So far it is just some settings. But I hope to continue improving.
+Maybe this shouldn't be a fork, I'm not sure on proper etiquette here.
 
-* This fork uses pm-utils and it doesn't schedule a wakeup.
-* Timings are increased (hours).
-* Idle times can be defined for cpu and disk individually.
-* Disk stat parsing has been updated.
+rcrane's notes:
+
+> I needed a simpler version of sspender and some parts of the original code seemed not necessary.
+>
+> * This fork uses pm-utils and it doesn't schedule a wakeup.
+> * Timings are increased (hours).
+> * Idle times can be defined for cpu and disk individually.
+> * Disk stat parsing has been updated.
 
 
 _Original README:_
